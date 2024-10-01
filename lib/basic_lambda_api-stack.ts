@@ -1,5 +1,7 @@
 /* Imports */
 // External libraries
+
+// this this is the fist code 
 import { Stack, StackProps, RemovalPolicy, CfnOutput } from 'aws-cdk-lib';
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
@@ -90,7 +92,7 @@ export class BasicLambdaApiStack extends Stack {
       }
     });
 
-    // GET ALL
+    // GET ALL // need to refactor as there other way to reuse the code
     handlerName = "getLocations"
     functionName = handlerName.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`) + '-' + stage;
     const getLocationsHandler = new NodejsFunction(this, functionName, {
@@ -163,7 +165,7 @@ export class BasicLambdaApiStack extends Stack {
       defaultCorsPreflightOptions: {
         allowOrigins: apigateway.Cors.ALL_ORIGINS,
         allowMethods: apigateway.Cors.ALL_METHODS,
-        allowHeaders: apigateway.Cors.DEFAULT_HEADERS
+        allowHeaders: apigateway.Cors.DEFAULT_HEADERS // checking cors
       },
       deployOptions: {
         stageName: stage
