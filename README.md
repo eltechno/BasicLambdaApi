@@ -1,49 +1,110 @@
-# BasicLambdaApi #
-Contains a TypeScript AWS project with a simple set of CRUD Rest APIs routed through API Gateway to Lambda Handlers which perform respective actions on a DynamoDB table. It is built using the AWS CDK.
+# Basic Lambda API with DynamoDB and API Gateway
 
-# Steps to Deploy #
-## Prerequisites [If Needed] ##
-1. IAM User and AWS CLI Privileges
-    1. Create User in AWS IAM Service for CLI Access in your AWS Region
-    2. Attach AdministratorAccess Policy to the User
-    3. Navigate to the User's Security Credentials and Create an Access Key and Secret Key for CLI Access
-    4. [!IMPORTANT] Save the Access Key and Secret Key in a secure location
-2. [Optional] Create a budget in AWS Budgets Service to monitor costs
-    1. Navigate to Billing and Cost Management Service
-    2. Select Budgets and Create a Budget
-    3. Use a template and select "Zero Spend Budget" to monitor costs
 
-## Steps ##
-1. Clone the repository
-2. Navigate to the project directory
-3. Run `npm install` to install the project dependencies
-4. Modify the stored `.env` file with your values
-5. [If Needed] Run `aws configure` to configure your AWS CLI with the Access Key and Secret Key for the IAM User
-6. [If Needed] Run `cdk bootstrap` to bootstrap the AWS CDK in your AWS Account
-7. Run `cdk deploy && npm run test` to deploy the stack and run the tests for stack validation
-8. View CLI Output for the API Gateway ID. Use this ID to test the API via the Postman Collection
+Part of this code is based on the 
 
-## Postman Collection ##
-The Postman Collection is located in the `postman` directory. It contains a set of CRUD API requests to test the API Gateway. The collection is pre-configured to use the API Gateway ID as a variable. You can modify the variable to use your API Gateway ID created by the stack.
-1. Import the Postman Collection into Postman
-2. Modify the API Gateway ID variable in the collection variables to use your API Gateway ID
-3. Run the requests in the collection to test the API
+# AWS CDK Immersion Day Workshop
 
-## Cleanup ##
-1. Run `cdk destroy` to destroy the stack and remove all resources created by the stack
+[link](https://catalog.us-east-1.prod.workshops.aws/workshops/10141411-0192-4021-afa8-2436f3c66bd8/en-US)
 
-## Notes ##
-There are several changes that can be made to this "application" to make it more production-ready. Some of these changes include:
-1. Implementing a CI/CD Pipeline for the project.
-    - I would leverage the CDK, Jest, and GitHub Actions to create a CI/CD Pipeline for this project. This would allow for automated testing and deployment of the project.
-    - More Unit Test, Postman Tests, etc...
-2. Implementing a Logging and Monitoring Solution for the project.
-    - I would leverage CloudWatch Logs and Metrics to monitor the project.
-3. Implementing Authentication and Authorization for the project.
-    - I would leverage Cognito User Pools and Identity Pools to implement authentication and authorization for the project.
-4. TypeScript
-    - Linting: I would leverage ESLint to lint the TypeScript code in the project. I haven't used it before, but believe this is the most common tool
-    - Typing/Interfaces: I would implement interfaces for the request and response objects in the project. This would help with type checking and code readability.
-    - Testing: I would implement unit tests for the Lambda Handlers in the project.
-5. I would not commit the .env to the repository. Potentially, I would store them more securely for BE usage in either AWS Secrets Manager or AWS Parameter Store.
-    
+This project defines an AWS CDK stack that provisions an API Gateway with Lambda functions connected to a DynamoDB table. The API provides CRUD operations (Create, Read, Update, Delete) for managing locations, with each resource being backed by a Lambda function and DynamoDB table.
+
+## Features
+
+- **DynamoDB**: A table with auto-scaling read and write capacities based on the environment (e.g., `prod`, `dev`).
+- **Lambda Functions**: Functions to handle location management (create, get, update, delete).
+- **API Gateway**: Exposes Lambda functions as REST API endpoints for interacting with the location data.
+- **CloudFormation Outputs**: Useful outputs such as DynamoDB table name, API Gateway URL, and Lambda function names.
+
+## File Structure
+
+- `basic_lambda_api-stack.ts`: The main CDK stack that defines resources like DynamoDB, Lambda functions, and API Gateway.
+- `config.ts`: Contains configuration values for different stages (not included in the code).
+- `src/`: Directory where Lambda handler files are stored (e.g., `get-location.ts`, `create-location.ts`, etc.).
+
+## Prerequisites
+
+Before deploying the stack, ensure you have the following installed:
+
+- **Node.js** (>= 14.x)
+- **AWS CDK** (>= 2.x)
+- **AWS CLI** (configured with the proper IAM permissions)
+- **TypeScript** (optional, for development)
+
+## Setup
+
+1. Clone this repository to your local machine:
+    ```bash
+    git clone <repository-url>
+    cd <repository-directory>
+    ```
+
+2. Install the dependencies:
+    ```bash
+    npm install
+    ```
+
+3. Build the project:
+    ```bash
+    npm run build
+    ```
+
+4. Synthesize the CloudFormation template:
+    ```bash
+    cdk synth
+    ```
+
+## Deployment
+
+To deploy the stack, follow these steps:
+
+1. Bootstrapping the AWS environment (if not already done):
+    ```bash
+    cdk bootstrap aws://<account-id>/<region>
+    ```
+
+2. Deploy the stack:
+    ```bash
+    cdk deploy
+    ```
+
+   This will create the necessary resources on AWS (DynamoDB, Lambda functions, and API Gateway).
+
+## API Endpoints
+
+Once the stack is deployed, the following API endpoints will be available:
+
+- `GET /locations`: Retrieve all locations.
+- `POST /locations`: Create a new location.
+- `GET /locations/{locationId}`: Retrieve a specific location by ID.
+- `PATCH /locations/{locationId}`: Update a location by ID.
+- `DELETE /locations/{locationId}`: Delete a location by ID.
+
+## Environment-Specific Configuration
+
+The code includes different configurations for different stages (`prod`, `dev`, etc.). These configurations affect DynamoDB read and write capacities. Make sure to define the `_CONFIG` object in `config.ts` that includes `APP_STAGE` to control the environment:
+
+Example:
+```ts
+export const config: ConfigProps = {
+  APP_STAGE: 'dev' // or 'prod'
+};
+```
+
+## Outputs
+
+Once the deployment is complete, the following outputs will be available:
+
+- **LocationTable**: The name of the DynamoDB table created.
+- **CentralApiGwUrl**: The base URL of the API Gateway.
+- **Lambda Function Names**: Names of all the Lambda functions created for the API.
+
+## Cleanup
+
+To remove the stack and all associated resources from your AWS account:
+
+```bash
+cdk destroy
+```
+
+---
