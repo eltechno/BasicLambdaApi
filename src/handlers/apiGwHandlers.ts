@@ -4,6 +4,11 @@ import { APIGatewayEvent, Handler, Context } from 'aws-lambda';
 import axios from 'axios';
 import * as AWS from 'aws-sdk';
 
+
+
+// this code is reused from the AWS workshop 
+
+
 // Internal libraries
 import { sendResponse } from '../utils/apiGwUtils';
 import { getConfig } from '../../lib/config';
@@ -72,6 +77,9 @@ export const getLocations: Handler = async (event: APIGatewayEvent, context: Con
         );
     }
 }
+
+
+// this code is reused from the AWS workshop 
 
 /**
  * This function will retrieve a single location from the Location Table in DynamoDB.
